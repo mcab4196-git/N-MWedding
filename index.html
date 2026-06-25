@@ -173,8 +173,8 @@ a{color:inherit;}
 }
 .verse em{font-style:italic;color:var(--sage);}
 .verse__names{font-family:"Pinyon Script",cursive;font-size:1.5em;color:var(--emerald);display:inline-block;margin:.1em 0;}
-.euca-side{position:absolute;top:50%;left:-46px;transform:translateY(-50%);width:200px;opacity:.92;pointer-events:none;z-index:1;}
-
+.euca-side{position:absolute;bottom:0;left:0;top:auto;transform:none;width:185px;opacity:.92;pointer-events:none;z-index:1;}
+  
 /* ===================== WHEN & WHERE ===================== */
 .events{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,3vw,30px);}
 .event-card{
@@ -360,7 +360,7 @@ a{color:inherit;}
   .ent-bearers{grid-template-columns:1fr;gap:22px;}
   .ent-grid3{grid-template-columns:1fr;}
   .gallery-grid{grid-template-columns:repeat(2,1fr);}
-  .euca-side{display:none;}
+  .euca-side{display:block;width:120px;left:0;}
   .couple-wrap{grid-template-columns:1fr;text-align:center;gap:24px;}
   .couple-copy p{margin-left:auto;margin-right:auto;}
   .couple-photo img{max-width:300px;}
