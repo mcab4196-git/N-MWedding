@@ -255,6 +255,26 @@ a{color:inherit;}
 .share-row h3{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:1.7rem;color:var(--emerald);margin:0 0 8px;}
 .share-row p{color:var(--ink-soft);font-size:.92rem;margin:0 auto 16px;max-width:460px;}
 .share-row small{display:block;color:var(--sage);font-size:.72rem;margin-top:10px;font-style:italic;}
+.share-qr{display:inline-flex;flex-direction:column;align-items:center;gap:9px;margin:6px 0 20px;text-decoration:none;}
+.share-qr img{width:172px;height:172px;background:#fff;padding:12px;border:1px solid var(--cream-line);box-shadow:var(--shadow);border-radius:6px;display:block;}
+.share-qr span{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);}
+
+/* ===================== MUSIC TOGGLE ===================== */
+.music-btn{
+  position:fixed;right:18px;bottom:18px;z-index:80;width:52px;height:52px;border-radius:50%;
+  background:var(--emerald);color:var(--gold-soft);border:1px solid var(--gold);cursor:pointer;
+  box-shadow:0 10px 26px -8px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;
+  transition:transform .25s,background .25s;
+}
+.music-btn:hover{transform:scale(1.07);}
+.music-btn svg{width:22px;height:22px;}
+.music-btn .ico-pause{display:none;}
+.music-btn.playing .ico-play{display:none;}
+.music-btn.playing .ico-pause{display:block;}
+.music-btn.playing{background:var(--gold);color:var(--emerald-deep);}
+.music-btn .pulse{position:absolute;inset:-1px;border-radius:50%;border:1px solid var(--gold-soft);opacity:0;}
+.music-btn.playing .pulse{animation:mpulse 1.8s ease-out infinite;}
+@keyframes mpulse{0%{opacity:.6;transform:scale(1);}100%{opacity:0;transform:scale(1.5);}}
 
 /* ===================== PHOTO BANNER ===================== */
 .banner{position:relative;width:100%;height:clamp(340px,64vh,580px);overflow:hidden;background:var(--emerald-deep);}
@@ -703,6 +723,14 @@ a{color:inherit;}
   <p class="footer__meta">July 18, 2026 &middot; Talisay, Batangas</p>
 </footer>
 
+<!-- ===================== BACKGROUND MUSIC ===================== -->
+<button class="music-btn" id="musicBtn" aria-label="Play background music" title="Play music">
+  <span class="pulse"></span>
+  <svg class="ico-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+  <svg class="ico-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+</button>
+<audio id="bgm" preload="none"></audio>
+
 <!-- ===================== LIGHTBOX ===================== -->
 <div class="lightbox" id="lightbox">
   <button class="lightbox__close" id="lbClose" aria-label="Close">&times;</button>
@@ -725,7 +753,7 @@ const CONFIG = {
   // --- Shared photo album for guests (Google Photos / Google Drive / etc.) ---
   // Paste a shareable album link here so guests can ADD their own photos.
   // Leave "" and the section still shows a friendly "coming soon" note.
-  sharedAlbumUrl: "",
+  sharedAlbumUrl: "https://photos.app.goo.gl/swcLZMWYKn4scEdy7",
 
   // --- Gallery photos ---
   // These are your photos in the assets folder. To add more, drop the image
@@ -733,26 +761,19 @@ const CONFIG = {
   //   "assets/photo-4.jpg"
   // You can also use full web links (e.g. a Google Drive direct image URL).
   galleryPhotos: [
-    "assets/1.jpeg",
-    "assets/2.jpeg",
-    "assets/3.jpeg",
-    "assets/4.jpeg",
-    "assets/5.jpeg",
-    "assets/6.jpeg",
-    "assets/7.jpeg",
-    "assets/8.jpeg",
-    "assets/9.jpeg",
-    "assets/10.jpeg",
+    "assets/photo-1.jpg",
+    "assets/photo-3.jpg",
+    "assets/photo-2.jpg"
   ],
-  placeholderCount: 10,
+  placeholderCount: 6,
 
   // --- RSVP delivery ---
   // EASIEST (works with no setup): leave rsvpEndpoint "" and put your email
   // below — submissions open the guest's email app, pre-addressed to you.
   // BETTER (recommended): create a free form at https://formspree.io,
   // then paste its endpoint, e.g. "https://formspree.io/f/abcdwxyz".
-  rsvpEndpoint: "https://formspree.io/f/xojzgobq",
-  coupleEmail: "cabellomacristina@gmail.com"
+  rsvpEndpoint: "",
+  coupleEmail: "youremail@example.com"
 };
 /* ================ end of CONFIG — code below ===================== */
 
@@ -814,6 +835,34 @@ const io = new IntersectionObserver((entries)=>{
 },{threshold:0.12});
 document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
 
+// ---------- Background music ----------
+(function music(){
+  const btn=document.getElementById("musicBtn");
+  const audio=document.getElementById("bgm");
+  if(!btn||!audio) return;
+  const tracks=["assets/on-this-day.mp3","assets/i-cherish-you.mp3"];
+  let idx=0, started=false;
+  audio.volume=0.55;
+  function load(i){ audio.src=tracks[i]; }
+  audio.addEventListener("ended",()=>{ idx=(idx+1)%tracks.length; load(idx); audio.play().catch(()=>{}); });
+  function play(){
+    if(!audio.src) load(idx);
+    audio.play().then(()=>{ btn.classList.add("playing"); btn.title="Pause music"; started=true; }).catch(()=>{});
+  }
+  function pause(){ audio.pause(); btn.classList.remove("playing"); btn.title="Play music"; }
+  btn.addEventListener("click",()=>{ audio.paused?play():pause(); });
+  // Try to start on the visitor's first interaction (browsers block autoplay until then)
+  function firstGesture(){
+    if(!started){ play(); }
+    window.removeEventListener("pointerdown",firstGesture);
+    window.removeEventListener("keydown",firstGesture);
+    window.removeEventListener("scroll",firstGesture);
+  }
+  window.addEventListener("pointerdown",firstGesture,{once:false});
+  window.addEventListener("keydown",firstGesture,{once:false});
+  window.addEventListener("scroll",firstGesture,{passive:true});
+})();
+
 // ---------- Gallery ----------
 (function gallery(){
   const grid = document.getElementById("galleryGrid");
@@ -848,13 +897,17 @@ document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
   if(CONFIG.sharedAlbumUrl){
     row.innerHTML=`<p class="eyebrow">Snap, Scan &amp; Share</p>
       <h3>Share Your Photos With Us</h3>
-      <p>Help us capture every moment of our special day. Add the photos you take straight to our shared album.</p>
-      <a class="btn btn--gold" href="${CONFIG.sharedAlbumUrl}" target="_blank" rel="noopener">Add Your Photos</a>`;
+      <p>Help us capture every moment of our special day. Scan the QR code or tap the button to add your photos to our shared album.</p>
+      <a class="share-qr" href="${CONFIG.sharedAlbumUrl}" target="_blank" rel="noopener" aria-label="Open shared photo album">
+        <img src="assets/share-qr.png" alt="QR code to our shared photo album" loading="lazy">
+        <span>Scan to add your photos</span>
+      </a>
+      <div><a class="btn btn--gold" href="${CONFIG.sharedAlbumUrl}" target="_blank" rel="noopener">Add Your Photos</a></div>`;
   }else{
     row.innerHTML=`<p class="eyebrow">Snap, Scan &amp; Share</p>
       <h3>Share Your Photos With Us</h3>
-      <p>Help us capture every moment of our special day. Share it in below link!</p>
-      <small>https://photos.app.goo.gl/swcLZMWYKn4scEdy7</small>`;
+      <p>Help us capture every moment of our special day. We'll be adding a shared photo album link here soon &mdash; please check back!</p>
+      <small>(Couple: paste your Google Photos album link in the CONFIG to turn on the button.)</small>`;
   }
 })();
 
