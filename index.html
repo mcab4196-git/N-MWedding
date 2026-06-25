@@ -733,19 +733,26 @@ const CONFIG = {
   //   "assets/photo-4.jpg"
   // You can also use full web links (e.g. a Google Drive direct image URL).
   galleryPhotos: [
-    "assets/photo-1.jpg",
-    "assets/photo-3.jpg",
-    "assets/photo-2.jpg"
+    "assets/1.jpg",
+    "assets/2.jpg",
+    "assets/3.jpg",
+    "assets/4.jpg",
+    "assets/5.jpg",
+    "assets/6.jpg",
+    "assets/7.jpg",
+    "assets/8.jpg",
+    "assets/9.jpg",
+    "assets/10.jpg",
   ],
-  placeholderCount: 6,
+  placeholderCount: 10,
 
   // --- RSVP delivery ---
   // EASIEST (works with no setup): leave rsvpEndpoint "" and put your email
   // below — submissions open the guest's email app, pre-addressed to you.
   // BETTER (recommended): create a free form at https://formspree.io,
   // then paste its endpoint, e.g. "https://formspree.io/f/abcdwxyz".
-  rsvpEndpoint: "",
-  coupleEmail: "youremail@example.com"
+  rsvpEndpoint: "https://formspree.io/f/xojzgobq",
+  coupleEmail: "cabellomacristina@gmail.com"
 };
 /* ================ end of CONFIG — code below ===================== */
 
@@ -847,7 +854,7 @@ document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
     row.innerHTML=`<p class="eyebrow">Snap, Scan &amp; Share</p>
       <h3>Share Your Photos With Us</h3>
       <p>Help us capture every moment of our special day. We'll be adding a shared photo album link here soon &mdash; please check back!</p>
-      <small>(Couple: paste your Google Photos album link in the CONFIG to turn on the button.)</small>`;
+      <small>https://photos.app.goo.gl/swcLZMWYKn4scEdy7</small>`;
   }
 })();
 
